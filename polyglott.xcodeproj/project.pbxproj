@@ -7,8 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		82565F801AE3E62E00D9DF1D /* voiceData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82565F7F1AE3E62E00D9DF1D /* voiceData.swift */; };
+		82565F831AE3E7D100D9DF1D /* voiceDoc.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82565F821AE3E7D100D9DF1D /* voiceDoc.swift */; };
+		82565F871AE41D0200D9DF1D /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 82565F861AE41D0200D9DF1D /* Images.xcassets */; };
 		829099C21AE31AC8002FD711 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 829099C11AE31AC8002FD711 /* AppDelegate.swift */; };
-		829099C41AE31AC8002FD711 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 829099C31AE31AC8002FD711 /* Images.xcassets */; };
 		829099C71AE31AC8002FD711 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 829099C51AE31AC8002FD711 /* MainMenu.xib */; };
 		829099D31AE31AC8002FD711 /* polyglottTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 829099D21AE31AC8002FD711 /* polyglottTests.swift */; };
 /* End PBXBuildFile section */
@@ -24,10 +26,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		82565F7F1AE3E62E00D9DF1D /* voiceData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = voiceData.swift; sourceTree = "<group>"; };
+		82565F821AE3E7D100D9DF1D /* voiceDoc.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = voiceDoc.swift; sourceTree = "<group>"; };
+		82565F861AE41D0200D9DF1D /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		829099BC1AE31AC8002FD711 /* polyglott.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = polyglott.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		829099C01AE31AC8002FD711 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		829099C11AE31AC8002FD711 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		829099C31AE31AC8002FD711 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		829099C61AE31AC8002FD711 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		829099CC1AE31AC8002FD711 /* polyglottTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = polyglottTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		829099D11AE31AC8002FD711 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -52,6 +56,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		82565F811AE3E6CF00D9DF1D /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				82565F7F1AE3E62E00D9DF1D /* voiceData.swift */,
+				82565F821AE3E7D100D9DF1D /* voiceDoc.swift */,
+			);
+			name = Model;
+			sourceTree = "<group>";
+		};
 		829099B31AE31AC8002FD711 = {
 			isa = PBXGroup;
 			children = (
@@ -73,9 +86,10 @@
 		829099BE1AE31AC8002FD711 /* polyglott */ = {
 			isa = PBXGroup;
 			children = (
+				82565F811AE3E6CF00D9DF1D /* Model */,
 				829099C11AE31AC8002FD711 /* AppDelegate.swift */,
-				829099C31AE31AC8002FD711 /* Images.xcassets */,
 				829099C51AE31AC8002FD711 /* MainMenu.xib */,
+				82565F861AE41D0200D9DF1D /* Images.xcassets */,
 				829099BF1AE31AC8002FD711 /* Supporting Files */,
 			);
 			path = polyglott;
@@ -186,7 +200,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				829099C41AE31AC8002FD711 /* Images.xcassets in Resources */,
+				82565F871AE41D0200D9DF1D /* Images.xcassets in Resources */,
 				829099C71AE31AC8002FD711 /* MainMenu.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -205,7 +219,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				82565F801AE3E62E00D9DF1D /* voiceData.swift in Sources */,
 				829099C21AE31AC8002FD711 /* AppDelegate.swift in Sources */,
+				82565F831AE3E7D100D9DF1D /* voiceDoc.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -326,6 +342,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = polyglott/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -337,6 +354,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = polyglott/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -396,6 +414,7 @@
 				829099D81AE31AC8002FD711 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		829099D91AE31AC8002FD711 /* Build configuration list for PBXNativeTarget "polyglottTests" */ = {
 			isa = XCConfigurationList;
@@ -404,6 +423,7 @@
 				829099DB1AE31AC8002FD711 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
