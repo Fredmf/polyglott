@@ -1,5 +1,6 @@
 # polyglott
-Status Bar Switcher for Speech Synthesis Voices under OSX, written in Swift
+Status Bar Switcher for Speech Synthesis Voices under OSX Yosemite 10.10.3, written in Swift
+(only testet under OSX Yosemite 10.10.3)
 
 ![pic1](/readme_img/pic1.png)
 ![pic2](/readme_img/pic2.png)
