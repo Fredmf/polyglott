@@ -1,3 +1,5 @@
+Sadly i no longer use OSX and so i'am not able to maintain anything for this Project
+
 # polyglott
 Status Bar Switcher for Speech Synthesis Voices under OSX Yosemite 10.10.3, written in Swift
 (only testet under OSX Yosemite 10.10.3, it still should work under Sierra)
