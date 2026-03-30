@@ -43,7 +43,7 @@ class voiceDoc: NSObject {
             }else if(name == "Tessa"){
                 flag = NSImage(named: "ZA")
             }else if(name == "Veena"){
-                flag = NSImage(named: "INUK")
+                flag = NSImage(named: "IN-UK")
             }else{
                 flag = NSImage(named: "US")
             }
@@ -109,7 +109,7 @@ class voiceDoc: NSObject {
             flag = NSImage(named: "HU")
             
         default:
-            println("unknown Language")
+            print("unknown language: \(lang)")
         }
     }
 }
