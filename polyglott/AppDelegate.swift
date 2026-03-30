@@ -7,127 +7,123 @@
 //
 
 import Cocoa
-import AppKit
-import Foundation
 
-@NSApplicationMain
+@main
 class AppDelegate: NSObject, NSApplicationDelegate {
 
     @IBOutlet weak var window: NSWindow!
     @IBOutlet weak var statusMenu: NSMenu!
-    
-    
-    let statusItem = NSStatusBar.systemStatusBar().statusItemWithLength(-1)//NSVariableStatusItemLength
-    
-    var voices = [voiceDoc]()
-    var lastSender: NSMenuItem = NSMenuItem()
-    
-    
-    
-    func shell(args: String...) -> Int32 {
-        let task = NSTask()
-        task.launchPath = "/usr/bin/env"
+
+    private let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
+
+    private var voices: [voiceDoc] = []
+    private var lastSender: NSMenuItem?
+
+    @discardableResult
+    private func shell(_ args: String...) -> Int32 {
+        let task = Process()
+        task.executableURL = URL(fileURLWithPath: "/usr/bin/env")
         task.arguments = args
-        task.launch()
-        task.waitUntilExit()
-        return task.terminationStatus
+
+        do {
+            try task.run()
+            task.waitUntilExit()
+            return task.terminationStatus
+        } catch {
+            NSLog("Failed to run command %@: %@", args.joined(separator: " "), error.localizedDescription)
+            return -1
+        }
     }
-    
-    func switchVoice(name: String) {
-        var voiceSynthID:Int = 0
-        var voiceID:Int = 0
-        
-        for element in voices{
-            if(element.data.name == name){
-                voiceID = element.data.id
-                voiceSynthID = element.data.synthID
-            }
+
+    private func switchVoice(name: String) {
+        guard let voice = voices.first(where: { $0.data.name == name }) else {
+            return
         }
-        
-        //change the settings
-        let changeSettingString = "defaults write com.apple.speech.voice.prefs 'SelectedVoiceCreator' -int \(voiceSynthID);defaults write com.apple.speech.voice.prefs 'SelectedVoiceID' -int \(voiceID);defaults write com.apple.speech.voice.prefs 'SelectedVoiceName' -string " + name
-        shell("sh","-c",changeSettingString)
-        
-        //restart the SpeechSynthesisServer --OK
-        shell("killall","SpeechSynthesisServer")
-        shell("open","/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/SpeechSynthesis.framework/Versions/A/SpeechSynthesisServer.app")
+
+        let escapedName = name.replacingOccurrences(of: "\"", with: "\\\"")
+        let changeSettingString = "defaults write com.apple.speech.voice.prefs 'SelectedVoiceCreator' -int \(voice.data.synthID); defaults write com.apple.speech.voice.prefs 'SelectedVoiceID' -int \(voice.data.id); defaults write com.apple.speech.voice.prefs 'SelectedVoiceName' -string \"\(escapedName)\""
+
+        _ = shell("sh", "-c", changeSettingString)
+
+        _ = shell("killall", "SpeechSynthesisServer")
+        _ = shell(
+            "open",
+            "/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/SpeechSynthesis.framework/Versions/A/SpeechSynthesisServer.app"
+        )
     }
-    
-    func scannVoices(){
-        var counter = voices.count
-        while (counter > 0) {
-            statusMenu.removeItemAtIndex(0)
-            counter--
-        }
-        
-        voices = []
-        let currentVoice = NSSpeechSynthesizer.defaultVoice()
-        let currentVoiceAttributes = NSSpeechSynthesizer.attributesForVoice(currentVoice) as? Dictionary<String, AnyObject>
-        let currentVoiceName = currentVoiceAttributes?["VoiceName"] as? String
-        
-        var voicesAvaliable = NSSpeechSynthesizer.availableVoices()
-        var total = 0
-        if let voicesList = voicesAvaliable as? [String] {
-            for element in voicesList {
-                let voiceAttributes = NSSpeechSynthesizer.attributesForVoice(element) as? Dictionary<String, AnyObject>
-                let voiceLang = voiceAttributes?["VoiceLanguage"] as? String
-                let voiceName = voiceAttributes?["VoiceName"] as? String
-                let voiceID = voiceAttributes?["VoiceNumericID"] as? Int
-                let voiceSynthID = voiceAttributes?["VoiceSynthesizerNumericID"] as? Int
-                
-                var voiceGender = voiceAttributes?["VoiceGender"] as? String //VoiceGenderFemale or VoiceGenderMale
-                voiceGender = voiceGender!.stringByReplacingOccurrencesOfString("VoiceGenderFemale", withString: "f");
-                voiceGender = voiceGender!.stringByReplacingOccurrencesOfString("VoiceGenderMale", withString: "m");
-                voiceGender = voiceGender!.stringByReplacingOccurrencesOfString("VoiceGenderNeuter", withString: "");
-    
-                var isPremium = false
-                if element.rangeOfString(".premium") != nil{
-                    isPremium = true
-                }
-                
-                if (isPremium){
-                    voices.append(voiceDoc(name: voiceName!, gender: voiceGender!, lang: voiceLang!, id: voiceID!, synthID: voiceSynthID!))
-                }
+
+    private func scanVoices() {
+        statusMenu.removeAllItems()
+        voices.removeAll()
+
+        let currentVoice = NSSpeechSynthesizer.defaultVoice
+        let currentVoiceAttributes = currentVoice.flatMap { NSSpeechSynthesizer.attributes(forVoice: $0) }
+        let currentVoiceName = currentVoiceAttributes?[NSSpeechSynthesizer.VoiceAttributeKey.name] as? String
+
+        for voiceIdentifier in NSSpeechSynthesizer.availableVoices {
+            guard
+                let attributes = NSSpeechSynthesizer.attributes(forVoice: voiceIdentifier),
+                let voiceLang = attributes["VoiceLanguage"] as? String,
+                let voiceName = attributes["VoiceName"] as? String,
+                let voiceID = attributes["VoiceNumericID"] as? NSNumber,
+                let voiceSynthID = attributes["VoiceSynthesizerNumericID"] as? NSNumber
+            else {
+                continue
             }
+
+            var voiceGender = (attributes["VoiceGender"] as? String) ?? ""
+            voiceGender = voiceGender.replacingOccurrences(of: "VoiceGenderFemale", with: "f")
+            voiceGender = voiceGender.replacingOccurrences(of: "VoiceGenderMale", with: "m")
+            voiceGender = voiceGender.replacingOccurrences(of: "VoiceGenderNeuter", with: "")
+
+            voices.append(
+                voiceDoc(
+                    name: voiceName,
+                    gender: voiceGender,
+                    lang: voiceLang,
+                    id: voiceID.intValue,
+                    synthID: voiceSynthID.intValue
+                )
+            )
         }
-        var posIndex = 0
-        for element in voices {
-            var menuItem: NSMenuItem = NSMenuItem()
-            menuItem.title = element.data.name
+
+        voices.sort { $0.data.name.localizedCaseInsensitiveCompare($1.data.name) == .orderedAscending }
+
+        for (index, element) in voices.enumerated() {
+            let menuItem = NSMenuItem(title: element.data.name, action: #selector(menuClicked(sender:)), keyEquivalent: "")
             menuItem.image = element.flag
             menuItem.target = self
-            menuItem.action = Selector("menuClicked:")
-            if (element.data.name == currentVoiceName){
-                menuItem.state = NSOnState
+
+            if element.data.name == currentVoiceName {
+                menuItem.state = .on
                 lastSender = menuItem
             }
-            statusMenu.insertItem(menuItem, atIndex: posIndex)
-            posIndex++
+
+            statusMenu.insertItem(menuItem, at: index)
         }
     }
-    
-    func applicationDidFinishLaunching(aNotification: NSNotification) {
+
+    func applicationDidFinishLaunching(_ notification: Notification) {
         let icon = NSImage(named: "statusIcon")
-        icon?.setTemplate(true)
-        statusItem.image = icon
+        icon?.isTemplate = true
+        statusItem.button?.image = icon
         statusItem.menu = statusMenu
-        statusItem.highlightMode = true
-        
-        scannVoices()
+
+        scanVoices()
     }
 
-    @IBAction func refreshClicked(sender: NSMenuItem) {
-        scannVoices()
-        switchVoice("test")
+    @IBAction func refreshClicked(_ sender: NSMenuItem) {
+        scanVoices()
     }
-    @IBAction func quitClocked(sender: NSMenuItem) {
-        NSApplication.sharedApplication().terminate(self)
+
+    @IBAction func quitClocked(_ sender: NSMenuItem) {
+        NSApplication.shared.terminate(self)
     }
+
     @IBAction func menuClicked(sender: NSMenuItem) {
-        lastSender.state = NSOffState
+        lastSender?.state = .off
         lastSender = sender
-        sender.state = NSOnState
-        switchVoice(sender.title)
+        sender.state = .on
+        switchVoice(name: sender.title)
     }
 }
-
